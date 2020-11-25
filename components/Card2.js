@@ -29,6 +29,12 @@ const useStyles = makeStyles((theme) => ({
     backgroundSize: 'contain',
     width: '30%',
   },
+  image : {
+    width: 100,
+    [theme.breakpoints.down('md')]: {  
+      width: 64,
+    },
+  },
   controls: {
     display: 'flex',
     paddingLeft: theme.spacing(1),
@@ -57,12 +63,12 @@ export default function MediaControlCard({title, subtitle, image}) {
         </CardContent>
         <div className={classes.controls}>
           <Button color="secondary">
-            OK
+            Ver mais
           </Button>
         </div>
       </div>
       <Grid container alignItems="center" justify="center" className={classes.contentImage}>
-        <img className={classes.image} width="100" src={image} />
+        <img className={classes.image} src={image} />
       </Grid>
     </Card>
   );

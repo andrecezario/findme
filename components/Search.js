@@ -8,6 +8,12 @@ import Button from '@material-ui/core/Button';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import DirectionsIcon from '@material-ui/icons/Directions';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import FormControl from '@material-ui/core/FormControl';
+
+import Link from 'next/link'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,25 +48,63 @@ const useStyles = makeStyles((theme) => ({
     height: 28,
     margin: 4,
   },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
 }));
 
 export default function CustomizedInputBase() {
   const classes = useStyles();
 
+  const [type, setType] = React.useState('descrição');
+  const [parameter, setParameter] = React.useState('');
+
+  const handleChangeType = (event) => {
+    setType(event.target.value);
+  };
+
+  const handleChangeParameter = (event) => {
+    setParameter(event.target.value);
+  };
+
   return (
     <Paper component="form" className={classes.root}>
-      <IconButton className={classes.iconButton} aria-label="menu">
-        <MenuIcon />
-      </IconButton>
+      <FormControl className={classes.formControl}>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={type}
+          onChange={handleChangeType}
+          disableUnderline
+        >
+          <MenuItem value={'descrição'}>Descrição</MenuItem>
+          <MenuItem value={'código de barras'}>Código de Barras</MenuItem>
+          <MenuItem value={'estabelecimento'}>Estabelecimento</MenuItem>
+        </Select>
+      </FormControl>
+      <Divider className={classes.divider} orientation="vertical" />
       <InputBase
         className={classes.input}
-        placeholder="Procurar produtos por descrição"
+        value ={parameter}
+        onChange={handleChangeParameter}
+        placeholder={"Procurar produtos por "+type }
       />
-      <IconButton type="submit" className={classes.iconButton} aria-label="search">
+      <IconButton className={classes.iconButton} aria-label="search">
         <SearchIcon style={{fontSize: 32}} />
       </IconButton>
       <Divider className={classes.divider} orientation="vertical" />
-      <Button color="secondary" variant="contained" className={classes.buttonSearch}>Buscar</Button>
+      <Link 
+        href={{
+          pathname: '/busca',
+          query: { q: parameter },
+        }} 
+        passHref>
+        <Button type="submit" color="secondary" variant="contained" className={classes.buttonSearch}>Buscar</Button>
+      </Link>
     </Paper>
   );
 }

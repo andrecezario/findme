@@ -18,7 +18,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import CropFreeIcon from '@material-ui/icons/CropFree';
 import LocalMallIcon from '@material-ui/icons/LocalMall';
 import LocalConvenienceStoreIcon from '@material-ui/icons/LocalConvenienceStore';
-import { Grid } from '@material-ui/core';
+import { Grid, Button } from '@material-ui/core';
 
 //Imports
 import Search from './Search';
@@ -192,13 +192,13 @@ export default function PersistentDrawerLeft() {
           </Grid>
         </Grid>
         <Grid container spacing={3} className={classes.gridCards} alignItems="center" justify="center">
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} md={4}>
             <Card2 title='Busca por descrição' subtitle='Encontre produtos pelo nome' image='https://www.flaticon.com/svg/static/icons/svg/2282/2282161.svg'/>
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} md={4}>
             <Card2 title='Busca por código de barras' subtitle='Encontre produtos pelo código de barras' image='https://www.flaticon.com/svg/static/icons/svg/3699/3699606.svg'/>
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} md={4}>
             <Card2 title='Busca por estabelecimento' subtitle='Encontre produtos pelo estabelecimento' image='https://www.flaticon.com/svg/static/icons/svg/229/229119.svg'/>
           </Grid>
         </Grid>
