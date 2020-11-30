@@ -1,20 +1,72 @@
-import { Container, Typography, Grid } from "@material-ui/core";
-import { useRouter } from "next/router"
+
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router"
+import { Container, Typography, Grid, Avatar, Tooltip } from "@material-ui/core";
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { get, post } from '../services/api';
 import { get as get_images, post as post_images} from '../services/api_images';
-import Card from '../components/Card.js'
+import Pagination from '@material-ui/lab/Pagination';
+
+import Skeleton from '@material-ui/lab/Skeleton';
+
+import CardProduct from '../components/CardProduct.js'
+import Menu from '../components/Menu'
+import Filter from '../components/Filter'
+
+const useStyles = makeStyles((theme) => ({kgroundSize: 'contain',
+  titleSearch: {
+    textTransform: 'uppercase',
+    fontWeight: 600
+  },
+  contSkeleton: {
+    marginBottom: theme.spacing(3),
+    boxShadow:
+      "0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)",
+  },
+  centerSkeleton: {
+    margin: "0 auto",
+    display: "flex",
+    justifyContent: "center",
+    justifyItems: "center",
+    alignItems: "center",
+  },
+  imgSkeleton: {
+    [theme.breakpoints.up("sm")]: {
+      height: "345px !important",
+    },
+    [theme.breakpoints.down("sm")]: {
+      height: "175px !important",
+    },
+  },
+}));
 
 export default function Busca() {
+  const classes = useStyles();
+
   const router = useRouter();
 
   const [results, setResults] = React.useState([]);
+  const [resultsPagination, setResultsPagination] = React.useState([]);
+  const [pagination, setPagination] = React.useState({page: 1, start: 0, end: 8 })
   const [open, setOpen] = React.useState(false);
+
+  const handleChangePage = (event, value) => {
+    setPagination({ 
+      page: value,
+      start: pagination.end,
+      end: pagination.end * pagination.page
+    })
+
+    setResultsPagination(results.slice(pagination.start, pagination.end))
+  };
+
+  useEffect(() => {
+  }, [resultsPagination])
 
   const images = []
 
   const {
-      query: { q },
+      query: { q, type },
    } = router
 
   let data = {
@@ -22,7 +74,7 @@ export default function Busca() {
     dias: 3,
     latitude: -9.6432331,
     longitude: -35.7190686,
-    raio: 15
+    raio: 5
   }
   
  useEffect(async () => {
@@ -30,13 +82,15 @@ export default function Busca() {
     const request = async () => {
       const retorno =  await post('consultarPrecosPorDescricao', data)
       if (retorno.status === 200) {
-        const produtos = retorno.data.slice(0,4);
+        const produtos = retorno.data
 
         for(let produto of produtos) {
-          produto.link = await getImage(produto.dscProduto, produto.codGetin)
+          // produto.link = await getImage(produto.dscProduto, produto.codGetin)
+            produto.link = 'https://react.semantic-ui.com/images/wireframe/white-image.png'
         }
 
         setResults(produtos) 
+        setResultsPagination(produtos.slice(pagination.start, pagination.end))
       }
     }
 
@@ -59,26 +113,105 @@ export default function Busca() {
     return null
   }
 
-  useEffect(() => {
-    for (const result of results) {
-      getImage(result.dscProduto, result.codGetin)
-    }
-    console.log(images, results)
-    setOpen(true)
-  }, [results]);
+  // const results = [
+  //   {
+  //     dscProduto: 'Moletom Azul',
+  //     codGetin: '78961346689',
+  //     valMinimoVendido: 159.99,
+  //     link: 'https://demo.vercel.store/_next/image?url=https%3A%2F%2Fcdn11.bigcommerce.com%2Fs-qfzerv205w%2Fimages%2Fstencil%2Foriginal%2Fproducts%2F136%2F459%2Fmockup-ae9a83b0__49881.1603746586.png&w=1920&q=85'
+  //   },
+  //   {
+  //     dscProduto: 'Moletom Cinza',
+  //     codGetin: '78961346599',
+  //     valMinimoVendido: 259.99,
+  //     link: 'https://demo.vercel.store/_next/image?url=https%3A%2F%2Fcdn11.bigcommerce.com%2Fs-qfzerv205w%2Fimages%2Fstencil%2Foriginal%2Fproducts%2F130%2F442%2Fmockup-8ee910d1__57199.1603747525.png&w=1920&q=85'
+  //   },
+  //   {
+  //     dscProduto: 'Moletom Bomber Verde',
+  //     codGetin: '78461346689',
+  //     valMinimoVendido: 189.99,
+  //     link: 'https://demo.vercel.store/_next/image?url=https%3A%2F%2Fcdn11.bigcommerce.com%2Fs-qfzerv205w%2Fimages%2Fstencil%2Foriginal%2Fproducts%2F125%2F420%2Fmockup-7500e8eb__78586.1601229597.png&w=1920&q=85'
+  //   },
+  //   {
+  //     dscProduto: 'Camisa Moletom Cinza',
+  //     codGetin: '78961346611',
+  //     valMinimoVendido: 99.99,
+  //     link: 'https://demo.vercel.store/_next/image?url=https%3A%2F%2Fcdn11.bigcommerce.com%2Fs-qfzerv205w%2Fimages%2Fstencil%2Foriginal%2Fproducts%2F131%2F444%2Fmockup-5197eac5__60260.1601231192.png&w=1920&q=85'
+  //   }
+  // ]
+
+  const skeleton = (
+    results.length == 0 && [0, 1, 2, 3].map(() => (
+    <Grid item xs={3}>
+      <Grid
+        container
+        direction="column"
+        justify="center"
+        alignItems="center"
+      >
+        <Skeleton
+          variant="circle"
+          height={80}
+          width={80}
+          className={classes.centerSkeleton}
+          style={{
+            marginBottom: 50,
+          }}
+        >
+          <Avatar />
+        </Skeleton>
+        <Skeleton
+          className={classes.centerSkeleton}
+          variant="text"
+          width={"80%"}
+        >
+          <Typography>.</Typography>
+        </Skeleton>
+        <Skeleton
+          className={classes.centerSkeleton}
+          variant="text"
+          width={"80%"}
+        >
+          <Typography>.</Typography>
+        </Skeleton>
+      </Grid>
+    </Grid>
+  )))
 
   return  (
-    <Container>
-      <Typography paragraph variant="h6" component="h6">
-          Exibindo resultados para busca de "{q}"
-      </Typography>
-      <Grid container spacing={2} alignItems="center" justify="center">
-        {results.map((item, index) => (
-          <Grid item xs={4}>
-            <Card item={item}/>
+    <>
+      <Menu search={true} type={type} parameter={q}/>
+      {/* <Container style={{paddingTop: 20}} maxWidth="md"> */}
+        <Grid container>
+          <Grid item xs={3} container style={{padding: 20}} justify="center">
+            <Filter />
           </Grid>
-        ))}
-      </Grid>
-    </Container>
+          <Grid item xs={9} container style={{padding: 20}}>
+            <Grid item style={{ maxHeight: 80 }}>
+              <Typography className={classes.titleSearch} variant="h6" component="h6">
+                Resultado de busca para "{q}"
+              </Typography>
+              <Typography color="textSecondary" variant="body2" paragraph>
+                Exibindo 1 - 8 de {results.length} resultados
+              </Typography>
+            </Grid>
+            <br />
+            {pagination.page+','+pagination.start+'-'+pagination.end}
+            <Grid item container spacing={2} justify="center">
+              {skeleton}
+              {resultsPagination.map((item, index) => (
+                <Grid item xs={12} sm={6} md={4} lg={3}>
+                  <CardProduct item={item}/>
+                </Grid>
+              ))}
+            </Grid>
+            <Grid item container justify="center" style={{ marginTop: 16 }}>
+              <Typography>Page: {pagination.page}</Typography>
+              <Pagination count={Math.ceil(results.length/8)} page={pagination.page} onChange={handleChangePage} />
+            </Grid>
+          </Grid>
+        </Grid>
+      {/* </Container> */}
+    </>
   )
 }

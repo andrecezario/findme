@@ -32,6 +32,23 @@ const theme = createMuiTheme({
   typography: {
     fontFamily: ["Lato", "Ubuntu", "Roboto"].join(","),
   },
+  overrides: {
+    MuiButton: {
+      label: {
+        textTransform: "none",
+      },
+      containedPrimary: {
+        color: "#fff",
+      },
+    },
+
+    MuiFab: {
+      primary: {
+        color: "#fff",
+      },
+    },
+  },
+
 });
 
 export default theme;

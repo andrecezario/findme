@@ -1,208 +1,145 @@
 import React from 'react';
-import clsx from 'clsx';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import CropFreeIcon from '@material-ui/icons/CropFree';
-import LocalMallIcon from '@material-ui/icons/LocalMall';
-import LocalConvenienceStoreIcon from '@material-ui/icons/LocalConvenienceStore';
-import { Grid, Button } from '@material-ui/core';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import SvgIcon from '@material-ui/core/SvgIcon';
+import { Button, Grid } from '@material-ui/core';
+import SearchIcon from '@material-ui/icons/Search';
+import InputBase from '@material-ui/core/InputBase';
 
-//Imports
-import Search from './Search';
-import Card from './Card';
-import Card2 from './Card2';
-
-const drawerWidth = 240;
+import Link from 'next/link'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
-  },
-  appBar: {
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: drawerWidth,
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  banner: {
-    background: `linear-gradient(15deg, ${theme.palette.primaryLight.main} 20%, ${theme.palette.primary.main} 90%)`,
-    height: 340
+    flexGrow: 1,
   },
   menuButton: {
     marginRight: theme.spacing(2),
   },
-  hide: {
-    display: 'none',
+  title: {
+    //  flexGrow: 1,
   },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0
-  },
-  drawerPaper: {
-    width: drawerWidth,
+  appBar: {
     background: theme.palette.dark.main
   },
-  drawerHeader: {
+  search: {
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: fade(theme.palette.common.white, 0.15),
+    '&:hover': {
+      backgroundColor: fade(theme.palette.common.white, 0.25),
+    },
+    marginRight: theme.spacing(2),
+    marginLeft: 0,
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      marginLeft: theme.spacing(3),
+      width: 'auto',
+    },
+  },
+  searchIcon: {
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
     display: 'flex',
     alignItems: 'center',
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
   },
-  toolbar: {
-    background: theme.palette.dark.main,
-    padding: theme.spacing(1)
-  },
-  content: {
-    flexGrow: 1,
-    // padding: theme.spacing(3),
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    marginLeft: -drawerWidth,
-  },
-  gridCards: {
-    padding: theme.spacing(3),
+  inputRoot: {
+    color: 'inherit',
     width: '100%'
   },
-  contentShift: {
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    marginLeft: 0,
+  inputInput: {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    // [theme.breakpoints.up('md')]: {
+    //   width: '20ch',
+    // },
   },
-  titleHome: {
-    color: theme.palette.light.main,
-    marginBottom: theme.spacing(6)
-  }
 }));
 
-export default function PersistentDrawerLeft() {
+export default function MenuAppBar({search = false, type = 'descrição', parameter}) {
   const classes = useStyles();
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [auth, setAuth] = React.useState(true);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
+  const handleChange = (event) => {
+    setAuth(event.target.checked);
   };
 
-  const handleDrawerClose = () => {
-    setOpen(false);
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  const drawer = (
-    <div>
-      <div className={classes.toolbar} />
-      <Divider style={{ marginBottom: 10 }} />
-      <Typography variant="subtitle1" paragraph align="center" style={{color: '#fff'}}> Filtrar por: </Typography>
-      <List>
-        <ListItem button>
-          <ListItemIcon> <CropFreeIcon style={{color: '#fff'}} /></ListItemIcon>
-          <ListItemText primary={<Typography variant="subtitle2" style={{color: '#fff'}}>Código</Typography>} />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon> <LocalMallIcon style={{color: '#fff'}} /></ListItemIcon>
-          <ListItemText primary={<Typography variant="subtitle2" style={{color: '#fff'}}>Descrição</Typography>} />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon> <LocalConvenienceStoreIcon style={{color: '#fff'}} /></ListItemIcon>
-          <ListItemText primary={<Typography variant="subtitle2" style={{color: '#fff'}}>Estabelecimento</Typography>} />
-        </ListItem>
-      </List>
-    </div>
-  );
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <div className={classes.root}>
-      <CssBaseline />
-      <AppBar
-        position="fixed"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
-        })}
-      >
-        <Toolbar className={classes.toolbar}>
-          {/* <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            className={clsx(classes.menuButton, open && classes.hide)}
-          >
-            <MenuIcon />
-          </IconButton> */}
-          <Typography variant="h5" noWrap>
-            <img src="/images/logotipo.png" width="140"/>
-          </Typography>
+      <AppBar position="static" className={classes.appBar}>
+        <Toolbar>
+          <Grid container justify="space-between" alignItems="center">
+            <Grid item>
+              <Typography variant="h6" className={classes.title}>
+                <Link href="/">
+                  <Button>
+                    Home
+                    {/* <img src="https://olist.com/wp-content/uploads/2018/10/logo-zoom-site-olist.png" width="140" /> */}
+                  </Button>
+                </Link>
+              </Typography>
+            </Grid>
+            {search && 
+            <Grid item xs={6}> 
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <SearchIcon />
+                </div>
+                <InputBase
+                  value={parameter}
+                  placeholder={"Procurar produtos por "+type}
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput,
+                  }}
+                />
+              </div> 
+            </Grid>
+            }
+            <Grid item>
+              <div>
+                <IconButton
+                  onClick={handleMenu}
+                  color="inherit"
+                >
+                  <SvgIcon viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
+                  </SvgIcon>
+                </IconButton>
+                <IconButton
+                  onClick={handleMenu}
+                  color="inherit"
+                >
+                  <SvgIcon viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 2.748l-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                  </SvgIcon>
+                </IconButton>
+              </div>
+            </Grid>
+          </Grid>
         </Toolbar>
       </AppBar>
-      <Drawer
-        className={classes.drawer}
-        variant="persistent"
-        anchor="left"
-        open={open}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
-        <div className={classes.drawerHeader}>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon style={{color: '#fff'}}/> : <ChevronRightIcon style={{color: '#fff'}}/>}
-          </IconButton>
-        </div>
-        <Divider />
-        {drawer}
-      </Drawer>
-      <main
-        className={clsx(classes.content, {
-          [classes.contentShift]: open,
-        })}
-      >
-        <div className={classes.drawerHeader} />
-        <Grid container alignItems="center" justify="center" className={classes.banner}>
-          <Grid item xs={10} sm={8}>
-          <Typography align="center" paragraph variant="h4" className={classes.titleHome}>
-            Encontre os produtos mais baratos da sua região
-            </Typography>
-            <Search />
-          </Grid>
-        </Grid>
-        <Grid container spacing={3} className={classes.gridCards} alignItems="center" justify="center">
-          <Grid item xs={12} md={4}>
-            <Card2 title='Busca por descrição' subtitle='Encontre produtos pelo nome' image='https://www.flaticon.com/svg/static/icons/svg/2282/2282161.svg'/>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Card2 title='Busca por código de barras' subtitle='Encontre produtos pelo código de barras' image='https://www.flaticon.com/svg/static/icons/svg/3699/3699606.svg'/>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Card2 title='Busca por estabelecimento' subtitle='Encontre produtos pelo estabelecimento' image='https://www.flaticon.com/svg/static/icons/svg/229/229119.svg'/>
-          </Grid>
-        </Grid>
-      </main>
     </div>
   );
 }
