@@ -6,16 +6,14 @@ import CardMedia from '@material-ui/core/CardMedia';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import SkipNextIcon from '@material-ui/icons/SkipNext';
+import Grid from '@material-ui/core/Grid'
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     width: '100%',
-    minHeight: 175
+    minHeight: 175,
+    // borderLeft: 'solid 5px '+theme.palette.primary.main
   },
   details: {
     display: 'flex',
@@ -30,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     width: '30%',
   },
   image : {
-    width: 100,
+    width: 80,
     [theme.breakpoints.down('md')]: {  
       width: 64,
     },
@@ -62,7 +60,7 @@ export default function MediaControlCard({title, subtitle, image}) {
           </Typography>
         </CardContent>
         <div className={classes.controls}>
-          <Button color="secondary">
+          <Button color="primary">
             Ver mais
           </Button>
         </div>

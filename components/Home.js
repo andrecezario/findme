@@ -60,7 +60,7 @@ export default function Home() {
         <div className={classes.drawerHeader} />
         <Grid container alignItems="center" justify="center" className={classes.banner}>
           <Grid item xs={10} sm={8}>
-          <Typography align="center" paragraph variant="h4" className={classes.titleHome}>
+          <Typography align="center" paragraph variant="h4" component="h6" className={classes.titleHome}>
             Encontre os produtos mais baratos da sua região
             </Typography>
             <Search />
@@ -68,13 +68,13 @@ export default function Home() {
         </Grid>
         <Grid container spacing={3} className={classes.gridCards} alignItems="center" justify="center">
           <Grid item xs={12} md={4}>
-            <CardHome title='Busca por descrição' subtitle='Encontre produtos pelo nome' image='https://www.flaticon.com/svg/static/icons/svg/2282/2282161.svg'/>
+            <CardHome title='Busca por descrição' subtitle='Encontre produtos pelo nome' image='/images/shopping-online.svg'/>
           </Grid>
           <Grid item xs={12} md={4}>
-            <CardHome title='Busca por código de barras' subtitle='Encontre produtos pelo código de barras' image='https://www.flaticon.com/svg/static/icons/svg/3699/3699606.svg'/>
+            <CardHome title='Busca por código de barras' subtitle='Encontre produtos pelo código de barras' image='/images/barcode.svg'/>
           </Grid>
           <Grid item xs={12} md={4}>
-            <CardHome title='Busca por estabelecimento' subtitle='Encontre produtos pelo estabelecimento' image='https://www.flaticon.com/svg/static/icons/svg/229/229119.svg'/>
+            <CardHome title='Busca por estabelecimento' subtitle='Encontre produtos pelo estabelecimento' image='/images/shop.svg'/>
           </Grid>
         </Grid>
       </main>

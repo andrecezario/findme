@@ -94,8 +94,7 @@ export default function MenuAppBar({search = false, type = 'descrição', parame
               <Typography variant="h6" className={classes.title}>
                 <Link href="/">
                   <Button>
-                    Home
-                    {/* <img src="https://olist.com/wp-content/uploads/2018/10/logo-zoom-site-olist.png" width="140" /> */}
+                    <img src="/images/logo.png" width="140" />
                   </Button>
                 </Link>
               </Typography>

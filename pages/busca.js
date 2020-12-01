@@ -48,20 +48,22 @@ export default function Busca() {
   const [results, setResults] = React.useState([]);
   const [resultsPagination, setResultsPagination] = React.useState([]);
   const [pagination, setPagination] = React.useState({page: 1, start: 0, end: 8 })
-  const [open, setOpen] = React.useState(false);
 
   const handleChangePage = (event, value) => {
+    const start = 8 * (value-1)
+    const end = 8 * value
+
+    console.log(start, end)
     setPagination({ 
       page: value,
-      start: pagination.end,
-      end: pagination.end * pagination.page
+      start: start,
+      end: end
     })
-
-    setResultsPagination(results.slice(pagination.start, pagination.end))
   };
 
   useEffect(() => {
-  }, [resultsPagination])
+    setResultsPagination(results.slice(pagination.start, pagination.end))
+  }, [pagination])
 
   const images = []
 
@@ -90,7 +92,8 @@ export default function Busca() {
         }
 
         setResults(produtos) 
-        setResultsPagination(produtos.slice(pagination.start, pagination.end))
+        sortResults()
+        setResultsPagination(results.slice(pagination.start, pagination.end))
       }
     }
 
@@ -111,6 +114,19 @@ export default function Busca() {
       return imagens.data.items[0].link
     } 
     return null
+  }
+
+  const sortResults = () => {
+    results.sort(function (a, b) {
+      if (a.valMinimoVendido.toFixed(2) > b.valMinimoVendido.toFixed(2)) {
+        return 1;
+      }
+      if (a.valMinimoVendido.toFixed(2) < b.valMinimoVendido.toFixed(2)) {
+        return -1;
+      }
+      // a must be equal to b
+      return 0;
+    });
   }
 
   // const results = [
@@ -183,7 +199,7 @@ export default function Busca() {
       <Menu search={true} type={type} parameter={q}/>
       {/* <Container style={{paddingTop: 20}} maxWidth="md"> */}
         <Grid container>
-          <Grid item xs={3} container style={{padding: 20}} justify="center">
+          <Grid item xs={3} style={{padding: 20}}>
             <Filter />
           </Grid>
           <Grid item xs={9} container style={{padding: 20}}>
@@ -195,8 +211,13 @@ export default function Busca() {
                 Exibindo 1 - 8 de {results.length} resultados
               </Typography>
             </Grid>
+            {results.length>0 &&
+            <Grid item container justify="flex-end" style={{ marginBottom: 16 }}>
+              <Typography>Page: {pagination.page}</Typography>
+              <Pagination count={Math.ceil(results.length/8)} page={pagination.page} onChange={handleChangePage} />
+            </Grid>
+            }
             <br />
-            {pagination.page+','+pagination.start+'-'+pagination.end}
             <Grid item container spacing={2} justify="center">
               {skeleton}
               {resultsPagination.map((item, index) => (
@@ -204,10 +225,6 @@ export default function Busca() {
                   <CardProduct item={item}/>
                 </Grid>
               ))}
-            </Grid>
-            <Grid item container justify="center" style={{ marginTop: 16 }}>
-              <Typography>Page: {pagination.page}</Typography>
-              <Pagination count={Math.ceil(results.length/8)} page={pagination.page} onChange={handleChangePage} />
             </Grid>
           </Grid>
         </Grid>
