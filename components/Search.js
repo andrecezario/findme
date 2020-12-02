@@ -1,14 +1,18 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import InputBase from '@material-ui/core/InputBase';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
 import SearchIcon from '@material-ui/icons/Search';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import FormControl from '@material-ui/core/FormControl';
+import { 
+  Select,
+  SvgIcon,
+  MenuItem,
+  FormControl,
+  Button,
+  Divider,
+  IconButton,
+  InputBase,
+  Paper
+} 
+  from '@material-ui/core';
 
 import Link from 'next/link'
 
@@ -91,7 +95,11 @@ export default function CustomizedInputBase() {
         placeholder={"Procurar produtos por "+type }
       />
       <IconButton className={classes.iconButton} aria-label="search">
-        <SearchIcon style={{fontSize: 32}} />
+        {/* <SearchIcon style={{fontSize: 32}} /> */}
+        <SvgIcon viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/>
+          <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
+        </SvgIcon>
       </IconButton>
       <Divider className={classes.divider} orientation="vertical" />
       <Link 
@@ -100,7 +108,9 @@ export default function CustomizedInputBase() {
           query: { q: parameter },
         }} 
         passHref>
-        <Button type="submit" color="secondary" variant="contained" className={classes.buttonSearch}>Buscar</Button>
+        <Button type="submit" color="secondary" variant="contained" className={classes.buttonSearch}>
+          <b>Buscar</b>
+        </Button>
       </Link>
     </Paper>
   );

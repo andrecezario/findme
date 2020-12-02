@@ -18,17 +18,17 @@ const useStyles = makeStyles((theme) => ({
   details: {
     display: 'flex',
     flexDirection: 'column',
-    width: '70%',
+    width: '68%',
   },
   content: {
     flex: '1 0 auto',
   },
   contentImage: {
     backgroundSize: 'contain',
-    width: '30%',
+    width: '32%',
   },
   image : {
-    width: 80,
+    width: 120,
     [theme.breakpoints.down('md')]: {  
       width: 64,
     },
@@ -42,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
     height: 38,
     width: 38,
   },
+  title: {
+    fontSize: 18
+  }
 }));
 
 export default function MediaControlCard({title, subtitle, image}) {
@@ -52,7 +55,7 @@ export default function MediaControlCard({title, subtitle, image}) {
     <Card className={classes.root}>
       <div className={classes.details}>
         <CardContent className={classes.content}>
-          <Typography component="h6" variant="h6">
+          <Typography className={classes.title} variant="subtitle1" color="textPrimary">
             <b>{title}</b>
           </Typography>
           <Typography variant="subtitle2" color="textSecondary">
@@ -60,7 +63,7 @@ export default function MediaControlCard({title, subtitle, image}) {
           </Typography>
         </CardContent>
         <div className={classes.controls}>
-          <Button color="primary">
+          <Button color="secondary">
             Ver mais
           </Button>
         </div>

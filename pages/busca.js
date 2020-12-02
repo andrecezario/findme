@@ -10,6 +10,7 @@ import Pagination from '@material-ui/lab/Pagination';
 import Skeleton from '@material-ui/lab/Skeleton';
 
 import CardProduct from '../components/CardProduct.js'
+import Spinner from '../utils/Spinner'
 import Menu from '../components/Menu'
 import Filter from '../components/Filter'
 
@@ -48,12 +49,12 @@ export default function Busca() {
   const [results, setResults] = React.useState([]);
   const [resultsPagination, setResultsPagination] = React.useState([]);
   const [pagination, setPagination] = React.useState({page: 1, start: 0, end: 8 })
+  const [loading, setLoading] = React.useState(false)
 
   const handleChangePage = (event, value) => {
     const start = 8 * (value-1)
     const end = 8 * value
 
-    console.log(start, end)
     setPagination({ 
       page: value,
       start: start,
@@ -80,6 +81,7 @@ export default function Busca() {
   }
   
  useEffect(async () => {
+    setLoading(true)
     data.descricao =  q
     const request = async () => {
       const retorno =  await post('consultarPrecosPorDescricao', data)
@@ -93,7 +95,12 @@ export default function Busca() {
 
         setResults(produtos) 
         sortResults()
-        setResultsPagination(results.slice(pagination.start, pagination.end))
+        setPagination({ 
+          page: 1,
+          start: 0,
+          end: 8
+        })
+        setLoading(false)
       }
     }
 
@@ -157,7 +164,7 @@ export default function Busca() {
   // ]
 
   const skeleton = (
-    results.length == 0 && [0, 1, 2, 3].map(() => (
+    results.length == 0 && [0, 1, 2, 3, 4, 5, 6, 7].map(() => (
     <Grid item xs={3}>
       <Grid
         container
@@ -196,6 +203,7 @@ export default function Busca() {
 
   return  (
     <>
+      <Spinner loading={loading} />
       <Menu search={true} type={type} parameter={q}/>
       {/* <Container style={{paddingTop: 20}} maxWidth="md"> */}
         <Grid container>
@@ -213,12 +221,12 @@ export default function Busca() {
             </Grid>
             {results.length>0 &&
             <Grid item container justify="flex-end" style={{ marginBottom: 16 }}>
-              <Typography>Page: {pagination.page}</Typography>
-              <Pagination count={Math.ceil(results.length/8)} page={pagination.page} onChange={handleChangePage} />
+              <Typography>Página: {pagination.page}</Typography>
+              <Pagination color="secondary" variant="outlined"  count={Math.ceil(results.length/8)} page={pagination.page} onChange={handleChangePage} />
             </Grid>
             }
             <br />
-            <Grid item container spacing={2} justify="center">
+            <Grid item container spacing={3} justify="center">
               {skeleton}
               {resultsPagination.map((item, index) => (
                 <Grid item xs={12} sm={6} md={4} lg={3}>

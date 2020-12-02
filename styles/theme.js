@@ -30,7 +30,7 @@ const theme = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: ["Lato", "Ubuntu", "Roboto"].join(","),
+    fontFamily: ["Mulish","Lato", "Ubuntu", "Roboto"].join(","),
   },
   overrides: {
     MuiButton: {

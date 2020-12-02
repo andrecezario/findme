@@ -44,7 +44,9 @@ const useStyles = makeStyles((theme) => ({
   },
   titleHome: {
     color: theme.palette.light.main,
-    marginBottom: theme.spacing(6)
+    marginBottom: theme.spacing(6),
+    fontWeight: 600,
+    fontSize: 25
   }
 }));
 
@@ -66,15 +68,15 @@ export default function Home() {
             <Search />
           </Grid>
         </Grid>
-        <Grid container spacing={3} className={classes.gridCards} alignItems="center" justify="center">
+        <Grid container spacing={2} className={classes.gridCards} alignItems="center" justify="center">
           <Grid item xs={12} md={4}>
-            <CardHome title='Busca por descrição' subtitle='Encontre produtos pelo nome' image='/images/shopping-online.svg'/>
+            <CardHome title='Busca por descrição' subtitle='Encontre produtos pelo nome' image='/images/descricao.svg'/>
           </Grid>
           <Grid item xs={12} md={4}>
-            <CardHome title='Busca por código de barras' subtitle='Encontre produtos pelo código de barras' image='/images/barcode.svg'/>
+            <CardHome title='Busca por código de barras' subtitle='Encontre produtos pelo código de barras' image='/images/codigo.svg'/>
           </Grid>
           <Grid item xs={12} md={4}>
-            <CardHome title='Busca por estabelecimento' subtitle='Encontre produtos pelo estabelecimento' image='/images/shop.svg'/>
+            <CardHome title='Busca por estabelecimento' subtitle='Encontre produtos pelo estabelecimento' image='/images/estabelecimento.svg'/>
           </Grid>
         </Grid>
       </main>
