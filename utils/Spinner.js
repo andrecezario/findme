@@ -9,7 +9,7 @@ export const style = css`
   padding: 0;
   margin: 0 auto;
   justify-content: center;
-  z-index: 3 !important;
+  z-index: 1000 !important;
   margin-top: 40vh;
   left: 0;
   right: 0;
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100vh',
     background: theme.palette.light.main,
     opacity: 0.75,
-    zIndex: 2
+    zIndex: 1000
   }
 }));
 

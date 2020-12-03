@@ -1,23 +1,29 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router"
-import { Container, Typography, Grid, Avatar, Tooltip } from "@material-ui/core";
+import { Container, Typography, Grid, Avatar, Button, Tooltip } from "@material-ui/core";
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { get, post } from '../services/api';
 import { get as get_images, post as post_images} from '../services/api_images';
-import Pagination from '@material-ui/lab/Pagination';
 
 import Skeleton from '@material-ui/lab/Skeleton';
 
-import CardProduct from '../components/CardProduct.js'
+import CardProduct from '../components/CardProduct2.js'
 import Spinner from '../utils/Spinner'
 import Menu from '../components/Menu'
 import Filter from '../components/Filter'
+import Table from '../components/Table'
 
 const useStyles = makeStyles((theme) => ({kgroundSize: 'contain',
   titleSearch: {
     textTransform: 'uppercase',
-    fontWeight: 600
+    fontWeight: 600,
+    paddingTop: 16
+  },
+  title: {
+    textTransform: 'capitalize !important',
+    fontWeight: 600,
+    width: 150
   },
   contSkeleton: {
     marginBottom: theme.spacing(3),
@@ -47,24 +53,24 @@ export default function Busca() {
   const router = useRouter();
 
   const [results, setResults] = React.useState([]);
-  const [resultsPagination, setResultsPagination] = React.useState([]);
-  const [pagination, setPagination] = React.useState({page: 1, start: 0, end: 8 })
   const [loading, setLoading] = React.useState(false)
-
-  const handleChangePage = (event, value) => {
-    const start = 8 * (value-1)
-    const end = 8 * value
-
-    setPagination({ 
-      page: value,
-      start: start,
-      end: end
-    })
-  };
-
-  useEffect(() => {
-    setResultsPagination(results.slice(pagination.start, pagination.end))
-  }, [pagination])
+  const columns =
+    [
+      { 
+        title: 'Descrição',
+        field: 'dscProduto',
+        render: rowData => colDescricao(rowData)
+      },
+      { title: 'Valor mínimo (R$)', field: 'valMinimoVendido', type: 'numeric' },
+      { title: 'Valor máximo (R$)', field: 'valMaximoVendido', type: 'numeric' },
+      { 
+        title: 'Estabelecimento',
+        field: 'nomFantasia',
+        render: rowData => colEstabelecimento(rowData),
+      },
+      { title: 'Contato', field: 'numTelefone' },
+      { title: 'Endereço', field: 'nomLogradouro' }
+    ]
 
   const images = []
 
@@ -95,11 +101,6 @@ export default function Busca() {
 
         setResults(produtos) 
         sortResults()
-        setPagination({ 
-          page: 1,
-          start: 0,
-          end: 8
-        })
         setLoading(false)
       }
     }
@@ -136,107 +137,55 @@ export default function Busca() {
     });
   }
 
-  // const results = [
-  //   {
-  //     dscProduto: 'Moletom Azul',
-  //     codGetin: '78961346689',
-  //     valMinimoVendido: 159.99,
-  //     link: 'https://demo.vercel.store/_next/image?url=https%3A%2F%2Fcdn11.bigcommerce.com%2Fs-qfzerv205w%2Fimages%2Fstencil%2Foriginal%2Fproducts%2F136%2F459%2Fmockup-ae9a83b0__49881.1603746586.png&w=1920&q=85'
-  //   },
-  //   {
-  //     dscProduto: 'Moletom Cinza',
-  //     codGetin: '78961346599',
-  //     valMinimoVendido: 259.99,
-  //     link: 'https://demo.vercel.store/_next/image?url=https%3A%2F%2Fcdn11.bigcommerce.com%2Fs-qfzerv205w%2Fimages%2Fstencil%2Foriginal%2Fproducts%2F130%2F442%2Fmockup-8ee910d1__57199.1603747525.png&w=1920&q=85'
-  //   },
-  //   {
-  //     dscProduto: 'Moletom Bomber Verde',
-  //     codGetin: '78461346689',
-  //     valMinimoVendido: 189.99,
-  //     link: 'https://demo.vercel.store/_next/image?url=https%3A%2F%2Fcdn11.bigcommerce.com%2Fs-qfzerv205w%2Fimages%2Fstencil%2Foriginal%2Fproducts%2F125%2F420%2Fmockup-7500e8eb__78586.1601229597.png&w=1920&q=85'
-  //   },
-  //   {
-  //     dscProduto: 'Camisa Moletom Cinza',
-  //     codGetin: '78961346611',
-  //     valMinimoVendido: 99.99,
-  //     link: 'https://demo.vercel.store/_next/image?url=https%3A%2F%2Fcdn11.bigcommerce.com%2Fs-qfzerv205w%2Fimages%2Fstencil%2Foriginal%2Fproducts%2F131%2F444%2Fmockup-5197eac5__60260.1601231192.png&w=1920&q=85'
-  //   }
-  // ]
+  const title = (
+    <>
+      <Typography className={classes.titleSearch} variant="h6" component="h6">
+        Resultados da busca para "{q}"
+      </Typography>
+      <Typography color="textSecondary" variant="body2" paragraph>
+        <b>Exibindo 1 - 8 de {results.length} resultados</b>
+      </Typography>
+  </>
+  );
 
-  const skeleton = (
-    results.length == 0 && [0, 1, 2, 3, 4, 5, 6, 7].map(() => (
-    <Grid item xs={3}>
-      <Grid
-        container
-        direction="column"
-        justify="center"
-        alignItems="center"
-      >
-        <Skeleton
-          variant="circle"
-          height={80}
-          width={80}
-          className={classes.centerSkeleton}
-          style={{
-            marginBottom: 50,
-          }}
-        >
-          <Avatar />
-        </Skeleton>
-        <Skeleton
-          className={classes.centerSkeleton}
-          variant="text"
-          width={"80%"}
-        >
-          <Typography>.</Typography>
-        </Skeleton>
-        <Skeleton
-          className={classes.centerSkeleton}
-          variant="text"
-          width={"80%"}
-        >
-          <Typography>.</Typography>
-        </Skeleton>
+  const colDescricao = (rowData) => (
+    <>
+      <Typography className={classes.title}>
+        {rowData.dscProduto.toLowerCase()}
+        {/* <Tooltip>
+          {rowData.dscProduto}
+        </Tooltip> */}
+      </Typography>
+    </>
+  );
+
+  const colEstabelecimento = (rowData) => (
+    <Grid container spacing={1} direction="column" alignItems="center" style={{width: 150}}>
+      <Grid item>
+        <Typography noWrap>
+          {rowData.nomFantasia}
+        </Typography>
+      </Grid>
+      <Grid item>
+        <Button onClick={()=> alert(rowData.nomFantasia)} color="se" variant="contained">
+          Conferir
+        </Button>
       </Grid>
     </Grid>
-  )))
+  );
 
   return  (
     <>
       <Spinner loading={loading} />
       <Menu search={true} type={type} parameter={q}/>
-      {/* <Container style={{paddingTop: 20}} maxWidth="md"> */}
-        <Grid container>
-          <Grid item xs={3} style={{padding: 20}}>
-            <Filter />
-          </Grid>
-          <Grid item xs={9} container style={{padding: 20}}>
-            <Grid item style={{ maxHeight: 80 }}>
-              <Typography className={classes.titleSearch} variant="h6" component="h6">
-                Resultado de busca para "{q}"
-              </Typography>
-              <Typography color="textSecondary" variant="body2" paragraph>
-                Exibindo 1 - 8 de {results.length} resultados
-              </Typography>
-            </Grid>
-            {results.length>0 &&
-            <Grid item container justify="flex-end" style={{ marginBottom: 16 }}>
-              <Typography>Página: {pagination.page}</Typography>
-              <Pagination color="secondary" variant="outlined"  count={Math.ceil(results.length/8)} page={pagination.page} onChange={handleChangePage} />
-            </Grid>
-            }
-            <br />
-            <Grid item container spacing={3} justify="center">
-              {skeleton}
-              {resultsPagination.map((item, index) => (
-                <Grid item xs={12} sm={6} md={4} lg={3}>
-                  <CardProduct item={item}/>
-                </Grid>
-              ))}
-            </Grid>
-          </Grid>
+      <Grid item xs={12} container spacing={2} justify="space-between" style={{padding: 20}}>
+        <Grid item xs={3}>
+          <Filter />
         </Grid>
-      {/* </Container> */}
+        <Grid item xs={9}>
+          <Table title={title} columns={columns} data={results} />
+        </Grid>
+      </Grid>
     </>
   )
 }

@@ -94,7 +94,7 @@ export default function MenuAppBar({search = false, type = 'descrição', parame
               <Typography variant="h6" className={classes.title}>
                 <Link href="/">
                   <Button>
-                    <img src="/images/logo.png" width="140" />
+                    <img src="/images/logo.png" width="120" />
                   </Button>
                 </Link>
               </Typography>
