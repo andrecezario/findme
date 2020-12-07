@@ -78,6 +78,9 @@ function Table({
       draggable: true,
       searchFieldVariant: 'outlined',
       selection: true,
+      headerStyle: {
+        fontWeight: '600',
+      },
       ...options,
     },
     localization: {

@@ -39,9 +39,11 @@ const theme = createMuiTheme({
       },
       containedPrimary: {
         color: "#fff",
+      },      
+      containedSecondary: {
+        color: "#fff",
       },
     },
-
     MuiFab: {
       primary: {
         color: "#fff",

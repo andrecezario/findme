@@ -25,6 +25,9 @@ const useStyles = makeStyles((theme) => ({kgroundSize: 'contain',
     fontWeight: 600,
     width: 150
   },
+  text: {
+    textTransform: 'capitalize !important',
+  },
   contSkeleton: {
     marginBottom: theme.spacing(3),
     boxShadow:
@@ -61,8 +64,12 @@ export default function Busca() {
         field: 'dscProduto',
         render: rowData => colDescricao(rowData)
       },
-      { title: 'Valor mínimo (R$)', field: 'valMinimoVendido', type: 'numeric' },
-      { title: 'Valor máximo (R$)', field: 'valMaximoVendido', type: 'numeric' },
+      { 
+        title: 'Valor (R$)',
+        field: 'valMinimoVendido',
+        type: 'numeric',
+        render: rowData => colValores(rowData)
+      },
       { 
         title: 'Estabelecimento',
         field: 'nomFantasia',
@@ -150,7 +157,7 @@ export default function Busca() {
 
   const colDescricao = (rowData) => (
     <>
-      <Typography className={classes.title}>
+      <Typography variant="body2" className={classes.title}>
         {rowData.dscProduto.toLowerCase()}
         {/* <Tooltip>
           {rowData.dscProduto}
@@ -160,19 +167,27 @@ export default function Busca() {
   );
 
   const colEstabelecimento = (rowData) => (
-    <Grid container spacing={1} direction="column" alignItems="center" style={{width: 150}}>
-      <Grid item>
-        <Typography noWrap>
-          {rowData.nomFantasia}
+    <Grid container spacing={1} direction="column" alignItems="center" style={{width: 200}}>
+      <Grid item xs={12}>
+        <Typography variant="body2" className={classes.text} noWrap>
+          {rowData.nomFantasia ? rowData.nomFantasia.toLowerCase() : '-'}
         </Typography>
       </Grid>
       <Grid item>
-        <Button onClick={()=> alert(rowData.nomFantasia)} color="se" variant="contained">
-          Conferir
+        <Button size="small" onClick={()=> alert(rowData.nomFantasia)} color="secondary" variant="contained">
+          <b>Conferir</b>
         </Button>
       </Grid>
     </Grid>
   );
+
+  const colValores = (rowData) => (
+    <Grid container justifyContent="center">
+      <Grid item xs={12}>
+        <Typography variant="body2"><Typography variant="caption" color="textPrimary">A partir de </Typography><b>{rowData.valMinimoVendido}</b></Typography>
+      </Grid>
+    </Grid>
+  )
 
   return  (
     <>
