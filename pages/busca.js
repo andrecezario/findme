@@ -167,7 +167,7 @@ export default function Busca() {
         </Typography>
       </Grid>
       <Grid item>
-        <Button onClick={()=> alert(rowData.nomFantasia)} color="se" variant="contained">
+        <Button onClick={()=> alert(rowData.nomFantasia)} color="primary" variant="outlined">
           Conferir
         </Button>
       </Grid>
@@ -179,10 +179,10 @@ export default function Busca() {
       <Spinner loading={loading} />
       <Menu search={true} type={type} parameter={q}/>
       <Grid item xs={12} container spacing={2} justify="space-between" style={{padding: 20}}>
-        <Grid item xs={3}>
+        {/* <Grid item xs={3}>
           <Filter />
-        </Grid>
-        <Grid item xs={9}>
+        </Grid> */}
+        <Grid item xs={12}>
           <Table title={title} columns={columns} data={results} />
         </Grid>
       </Grid>
