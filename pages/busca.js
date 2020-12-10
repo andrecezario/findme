@@ -1,7 +1,24 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router"
-import { Container, Typography, Grid, Avatar, Button, Tooltip } from "@material-ui/core";
+import { 
+  Container,
+  Typography,
+  Grid,
+  Avatar,
+  Button,
+  Tooltip,
+  SvgIcon,
+  IconButton,
+  Drawer,
+  Fab
+} from "@material-ui/core";
+
+import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import Zoom from '@material-ui/core/Zoom';
+import PropTypes from 'prop-types';
+
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { get, post } from '../services/api';
 import { get as get_images, post as post_images} from '../services/api_images';
@@ -14,7 +31,31 @@ import Menu from '../components/Menu'
 import Filter from '../components/Filter'
 import Table from '../components/Table'
 
-const useStyles = makeStyles((theme) => ({kgroundSize: 'contain',
+const drawerWidth = 300;
+
+const useStyles = makeStyles((theme) => ({
+  drawerPaper: {
+    width: drawerWidth,
+  },
+  contBtnFilter: {
+    position: 'fixed',
+    zIndex: 1111,
+    right: 0,
+    top: '30%',
+  },
+  btnFilter: {
+    borderRadius: '100%',
+    padding: 0, 
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+    width: 64,
+    height: 64
+  },
+  btnTop: {
+    position: 'fixed',
+    bottom: theme.spacing(2),
+    right: theme.spacing(2),
+  },
   titleSearch: {
     textTransform: 'uppercase',
     fontWeight: 600,
@@ -23,10 +64,11 @@ const useStyles = makeStyles((theme) => ({kgroundSize: 'contain',
   title: {
     textTransform: 'capitalize !important',
     fontWeight: 600,
-    width: 150
+    width: '100%'
   },
   text: {
     textTransform: 'capitalize !important',
+    textAlign: 'left'
   },
   contSkeleton: {
     marginBottom: theme.spacing(3),
@@ -50,7 +92,38 @@ const useStyles = makeStyles((theme) => ({kgroundSize: 'contain',
   },
 }));
 
-export default function Busca() {
+function ScrollTop(props) {
+  const { children, window } = props;
+  const classes = useStyles();
+  const trigger = useScrollTrigger({
+    target: window ? window() : undefined,
+    disableHysteresis: true,
+    threshold: 100,
+  });
+
+  const handleClick = (event) => {
+    const anchor = (event.target.ownerDocument || document).querySelector('#back-to-top-anchor');
+
+    if (anchor) {
+      anchor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
+  return (
+    <Zoom in={trigger}>
+      <div onClick={handleClick} role="presentation" className={classes.btnTop}>
+        {children}
+      </div>
+    </Zoom>
+  );
+}
+
+ScrollTop.propTypes = {
+  children: PropTypes.element.isRequired,
+  window: PropTypes.func,
+};
+
+export default function Busca(props) {
   const classes = useStyles();
 
   const router = useRouter();
@@ -65,7 +138,7 @@ export default function Busca() {
         render: rowData => colDescricao(rowData)
       },
       { 
-        title: 'Valor (R$)',
+        title: 'Valor',
         field: 'valMinimoVendido',
         type: 'numeric',
         render: rowData => colValores(rowData)
@@ -75,8 +148,11 @@ export default function Busca() {
         field: 'nomFantasia',
         render: rowData => colEstabelecimento(rowData),
       },
-      { title: 'Contato', field: 'numTelefone' },
-      { title: 'Endereço', field: 'nomLogradouro' }
+      { 
+        title: 'Endereço',
+        field: 'nomLogradouro',
+        render: rowData => colEndereco(rowData),
+      }
     ]
 
   const images = []
@@ -150,7 +226,7 @@ export default function Busca() {
         Resultados da busca para "{q}"
       </Typography>
       <Typography color="textSecondary" variant="body2" paragraph>
-        <b>Exibindo 1 - 8 de {results.length} resultados</b>
+        <b>{results.length} encontrados</b>
       </Typography>
   </>
   );
@@ -167,15 +243,24 @@ export default function Busca() {
   );
 
   const colEstabelecimento = (rowData) => (
-    <Grid container spacing={1} direction="column" alignItems="center" style={{width: 200}}>
-      <Grid item xs={12}>
+    <Grid container spacing={1} direction="row" justify="space-between" alignItems="center">
+      <Grid item>
         <Typography variant="body2" className={classes.text} noWrap>
-          {rowData.nomFantasia ? rowData.nomFantasia.toLowerCase() : '-'}
+          {rowData.nomFantasia ? rowData.nomFantasia.toLowerCase() : rowData.nomRazaoSocial ? rowData.nomRazaoSocial.toLowerCase() : '-'}
         </Typography>
       </Grid>
       <Grid item>
-        <Button size="small" onClick={()=> alert(rowData.nomFantasia)} color="secondary" variant="contained">
-          <b>Conferir</b>
+        <Button 
+          size="small"
+          onClick={()=> alert(rowData.nomFantasia)}
+          color="primary"
+          variant="outlined"
+          startIcon={<SvgIcon color="primary" width="24" height="24" viewBox="0 0 16 16">
+                      <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                      <path fill-rule="evenodd" d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+                    </SvgIcon>}
+          >
+          Conferir   
         </Button>
       </Grid>
     </Grid>
@@ -184,22 +269,95 @@ export default function Busca() {
   const colValores = (rowData) => (
     <Grid container justifyContent="center">
       <Grid item xs={12}>
-        <Typography variant="body2"><Typography variant="caption" color="textPrimary">A partir de </Typography><b>{rowData.valMinimoVendido}</b></Typography>
+        <Typography variant="body2" color="textPrimary">
+          {rowData.valMinimoVendido === rowData.valMaximoVendido ? 
+           <b>{rowData.valMinimoVendido.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</b>
+          : <>
+            <Typography variant="caption" color="textPrimary">De </Typography>
+            <b>{rowData.valMinimoVendido.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</b>
+            <Typography variant="caption" color="textPrimary"> à </Typography>
+            <b>{rowData.valMaximoVendido.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</b>
+            </>}
+        </Typography>
       </Grid>
     </Grid>
   )
+
+  const colEndereco = (rowData) => (
+    <Grid container spacing={1} justify="space-between" alignItems="center" direction="row" style={{minWidth: 200}}  >
+      <Grid item xs={9}>
+        <Typography variant="body2" className={classes.text}>
+          {(rowData.nomLogradouro+', '+rowData.numImovel+' - '+rowData.nomBairro+' , '+rowData.nomMunicipio+' - AL , '+rowData.numCep).toLowerCase()}
+        </Typography>
+      </Grid>
+      <Grid item xs={3}>
+        <Button 
+          onClick={() => alert(rowData.numLatitude+','+rowData.numLongitude)}
+          startIcon={<SvgIcon color="primary" width="24" height="24" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z"/>
+                    </SvgIcon>}
+          color="primary"
+          variant="outlined"
+          >
+        Ir
+        </Button>
+      </Grid>
+    </Grid>
+  )
+  //TODO
+  // add in dialog https://jsfiddle.net/onjzdvh5/5/
+  
+  const anchor = 'right'
+  const [state, setState] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
+
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+
+    setState({ ...state, [anchor]: open });
+  };
 
   return  (
     <>
       <Spinner loading={loading} />
       <Menu search={true} type={type} parameter={q}/>
+      <div className={classes.contBtnFilter}>
+        <Fab
+          variant="extended"
+          color="secondary"
+          onClick={toggleDrawer(anchor, true)}
+          className={classes.btnFilter}
+        >
+          <SvgIcon width="24" height="24" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
+          </SvgIcon>
+        </Fab>
+      </div>
       <Grid item xs={12} container spacing={2} justify="space-between" style={{padding: 20}}>
-        {/* <Grid item xs={3}>
-          <Filter />
-        </Grid> */}
+        <Drawer
+          anchor={anchor}
+          open={state[anchor]}
+          onClose={toggleDrawer(anchor, false)}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+          >
+          <Filter close={toggleDrawer(anchor, false)} />
+        </Drawer>
         <Grid item xs={12}>
           <Table title={title} columns={columns} data={results} />
         </Grid>
+        <ScrollTop {...props}>
+          <Fab color="secondary" size="small">
+            <KeyboardArrowUpIcon />
+          </Fab>
+        </ScrollTop>
       </Grid>
     </>
   )

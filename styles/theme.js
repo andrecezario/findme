@@ -47,6 +47,9 @@ const theme = createMuiTheme({
     MuiFab: {
       primary: {
         color: "#fff",
+      },          
+      secondary: {
+        color: "#fff",
       },
     },
   },

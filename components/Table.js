@@ -87,10 +87,10 @@ function Table({
       pagination: {
         labelDisplayedRows: '{from}-{to} de {count}',
         labelRowsSelect: 'Linhas',
-        nextTooltip: 'próximo',
-        previousTooltip: 'anterior',
-        firstTooltip: 'primeiro',
-        lastTooltip: 'último',
+        nextTooltip: 'Próximo',
+        previousTooltip: 'Anterior',
+        firstTooltip: 'Primeiro',
+        lastTooltip: 'Último',
       },
       body: {
         emptyDataSourceMessage: emptyMessage,

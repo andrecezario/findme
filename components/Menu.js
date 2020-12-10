@@ -88,7 +88,7 @@ export default function MenuAppBar({search = false, type = 'descrição', parame
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
-        <Toolbar>
+        <Toolbar id="back-to-top-anchor">
           <Grid container justify="space-between" alignItems="center">
             <Grid item>
               <Typography variant="h6" className={classes.title}>
