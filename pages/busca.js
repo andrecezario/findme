@@ -11,27 +11,47 @@ import {
   SvgIcon,
   IconButton,
   Drawer,
-  Fab
+  Fab,
+  Dialog
 } from "@material-ui/core";
+
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import CloseIcon from '@material-ui/icons/Close';
 
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Zoom from '@material-ui/core/Zoom';
 import PropTypes from 'prop-types';
 
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
+
 import { get, post } from '../services/api';
 import { get as get_images, post as post_images} from '../services/api_images';
 
 import Skeleton from '@material-ui/lab/Skeleton';
 
-import CardProduct from '../components/CardProduct2.js'
 import Spinner from '../utils/Spinner'
 import Menu from '../components/Menu'
 import Filter from '../components/Filter'
 import Table from '../components/Table'
+import Map from '../components/Map'
 
+import { withScriptjs } from 'react-google-maps'
 const drawerWidth = 300;
+
+const styles = (theme) => ({
+  root: {
+    margin: 0,
+    padding: theme.spacing(2),
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+});
 
 const useStyles = makeStyles((theme) => ({
   drawerPaper: {
@@ -123,10 +143,31 @@ ScrollTop.propTypes = {
   window: PropTypes.func,
 };
 
+const DialogTitle = withStyles(styles)((props) => {
+  const { children, classes, onClose, ...other } = props;
+  return (
+    <MuiDialogTitle disableTypography className={classes.root} {...other}>
+      <Typography variant="h6">{children}</Typography>
+      {onClose ? (
+        <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
+      ) : null}
+    </MuiDialogTitle>
+  );
+});
+
+const DialogContent = withStyles((theme) => ({
+  root: {
+    padding: theme.spacing(2),
+  },
+}))(MuiDialogContent);
+
 export default function Busca(props) {
   const classes = useStyles();
 
   const router = useRouter();
+  const MapLoader = withScriptjs(Map);
 
   const [results, setResults] = React.useState([]);
   const [loading, setLoading] = React.useState(false)
@@ -192,20 +233,20 @@ export default function Busca(props) {
 
   }, []);
 
-  const getImage = async (dscProduto, codGetin) => {
-    const params = {
-      key: process.env.REACT_APP_KEY_IMAGENS,
-      cx: '7e1513347dbebf77a',
-      searchType: 'image',
-      q: dscProduto + ' ' + codGetin,
-      num: 1
-    } 
-    const imagens = await get_images('',{ params })
-    if (imagens.data.items?.length > 0) {
-      return imagens.data.items[0].link
-    } 
-    return null
-  }
+  // const getImage = async (dscProduto, codGetin) => {
+  //   const params = {
+  //     key: process.env.REACT_APP_KEY_IMAGENS,
+  //     cx: '7e1513347dbebf77a',
+  //     searchType: 'image',
+  //     q: dscProduto + ' ' + codGetin,
+  //     num: 1
+  //   } 
+  //   const imagens = await get_images('',{ params })
+  //   if (imagens.data.items?.length > 0) {
+  //     return imagens.data.items[0].link
+  //   } 
+  //   return null
+  // }
 
   const sortResults = () => {
     results.sort(function (a, b) {
@@ -243,13 +284,13 @@ export default function Busca(props) {
   );
 
   const colEstabelecimento = (rowData) => (
-    <Grid container spacing={1} direction="row" justify="space-between" alignItems="center">
-      <Grid item>
+    <Grid container spacing={1} direction="row" justify="space-between" alignItems="center" style={{paddingRight: 20}}>
+      <Grid item xs={9}>
         <Typography variant="body2" className={classes.text} noWrap>
           {rowData.nomFantasia ? rowData.nomFantasia.toLowerCase() : rowData.nomRazaoSocial ? rowData.nomRazaoSocial.toLowerCase() : '-'}
         </Typography>
       </Grid>
-      <Grid item>
+      <Grid item xs={3}>
         <Button 
           size="small"
           onClick={()=> alert(rowData.nomFantasia)}
@@ -292,7 +333,8 @@ export default function Busca(props) {
       </Grid>
       <Grid item xs={3}>
         <Button 
-          onClick={() => alert(rowData.numLatitude+','+rowData.numLongitude)}
+          onClick={handleClickOpen}
+          // onClick={() => alert(rowData.numLatitude+','+rowData.numLongitude)}
           startIcon={<SvgIcon color="primary" width="24" height="24" viewBox="0 0 16 16">
                       <path fill-rule="evenodd" d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z"/>
                     </SvgIcon>}
@@ -304,9 +346,7 @@ export default function Busca(props) {
       </Grid>
     </Grid>
   )
-  //TODO
-  // add in dialog https://jsfiddle.net/onjzdvh5/5/
-  
+
   const anchor = 'right'
   const [state, setState] = React.useState({
     top: false,
@@ -322,6 +362,16 @@ export default function Busca(props) {
 
     setState({ ...state, [anchor]: open });
   };
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
 
   return  (
     <>
@@ -353,6 +403,22 @@ export default function Busca(props) {
         <Grid item xs={12}>
           <Table title={title} columns={columns} data={results} />
         </Grid>
+
+        <Dialog onClose={handleClose} open={open} fullWidth maxWidth='sm'>
+          <DialogTitle onClose={handleClose}>
+            Mapa
+          </DialogTitle>
+          <DialogContent dividers>
+            <Grid container justify="center" alignItems="center">
+              <Grid item>
+                <MapLoader
+                  googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_GOOGLE_MAPS}`}
+                  loadingElement={<div style={{ height: `100%` }} />}
+                />
+              </Grid>
+            </Grid>
+          </DialogContent>
+        </Dialog>
         <ScrollTop {...props}>
           <Fab color="secondary" size="small">
             <KeyboardArrowUpIcon />

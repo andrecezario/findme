@@ -30,7 +30,13 @@ const useStyles = makeStyles((theme) => ({
   image : {
     width: 120,
     [theme.breakpoints.down('md')]: {  
-      width: 64,
+      width: 80,
+    },
+    [theme.breakpoints.down('sm')]: {  
+      width: 140,
+    },    
+    [theme.breakpoints.down('xs')]: {  
+      width: 80,
     },
   },
   controls: {
