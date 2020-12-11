@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router"
+import { useDispatch, useSelector } from 'react-redux';
+import { actions } from '../store/ducks/coordinates';
+
 import { 
   Container,
   Typography,
@@ -36,7 +39,7 @@ import Filter from '../components/Filter'
 import Table from '../components/Table'
 import Map from '../components/Map'
 
-import { withScriptjs } from 'react-google-maps'
+import { withScriptjs, withGoogleMap } from 'react-google-maps'
 const drawerWidth = 300;
 
 const styles = (theme) => ({
@@ -169,9 +172,16 @@ export default function Busca(props) {
 
   const [results, setResults] = React.useState([]);
   const [loading, setLoading] = React.useState(false)
-  const [coordinates, setCoordinates] = React.useState({})
+  // const [coordinates, setCoordinates] = React.useState({})
+  const coordinates = useSelector((state) => state.coordinates);
+  const dispatch = useDispatch();
 
-  const MapLoader = withScriptjs(Map(coordinates));
+  // const MapLoader = withScriptjs(withGoogleMap(props =>
+  //   <Map
+  //     props={coordinates}
+  //   />
+  // ));
+  const MapLoader = withScriptjs(Map)
 
   const columns =
     [
@@ -218,14 +228,7 @@ export default function Busca(props) {
     const request = async () => {
       const retorno =  await post('consultarPrecosPorDescricao', data)
       if (retorno.status === 200) {
-        const produtos = retorno.data
-
-        for(let produto of produtos) {
-          // produto.link = await getImage(produto.dscProduto, produto.codGetin)
-            produto.link = 'https://react.semantic-ui.com/images/wireframe/white-image.png'
-        }
-
-        setResults(produtos) 
+        setResults(retorno.data) 
         sortResults()
         setLoading(false)
       }
@@ -234,21 +237,6 @@ export default function Busca(props) {
     await request();
 
   }, []);
-
-  // const getImage = async (dscProduto, codGetin) => {
-  //   const params = {
-  //     key: process.env.REACT_APP_KEY_IMAGENS,
-  //     cx: '7e1513347dbebf77a',
-  //     searchType: 'image',
-  //     q: dscProduto + ' ' + codGetin,
-  //     num: 1
-  //   } 
-  //   const imagens = await get_images('',{ params })
-  //   if (imagens.data.items?.length > 0) {
-  //     return imagens.data.items[0].link
-  //   } 
-  //   return null
-  // }
 
   const sortResults = () => {
     results.sort(function (a, b) {
@@ -335,7 +323,10 @@ export default function Busca(props) {
       </Grid>
       <Grid item xs={3}>
         <Button 
-          onClick={handleClickOpen}
+          onClick={() => {
+            handleClickOpen(rowData.numLatitude, rowData.numLongitude)
+            }
+          }
           // onClick={() => alert(rowData.numLatitude+','+rowData.numLongitude)}
           startIcon={<SvgIcon color="primary" width="24" height="24" viewBox="0 0 16 16">
                       <path fill-rule="evenodd" d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z"/>
@@ -367,7 +358,9 @@ export default function Busca(props) {
 
   const [open, setOpen] = React.useState(false);
 
-  const handleClickOpen = () => {
+  const handleClickOpen = (numLatitude, numLongitude) => {
+    dispatch(actions.set({...coordinates, latDestination: numLatitude, lgnDestination: numLongitude }));
+    // setCoordinates({...coordinates, latDestination: numLatitude, lgnDestination: numLongitude })
     getLocation()
     setOpen(true);
   };
@@ -384,7 +377,8 @@ export default function Busca(props) {
   }
   
   function showPosition(position) {
-    setCoordinates({...coordinates, latOrigin: position.coords.latitude,  lgnOrigin: position.coords.longitude }) 
+    dispatch(actions.set({...coordinates, latOrigin: position.coords.latitude,  lgnOrigin: position.coords.longitude }))
+    // setCoordinates({...coordinates, latOrigin: position.coords.latitude,  lgnOrigin: position.coords.longitude }) 
   }
 
   function showError(error) {
@@ -445,6 +439,8 @@ export default function Busca(props) {
                 <MapLoader
                   googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_GOOGLE_MAPS}`}
                   loadingElement={<div style={{ height: `100%` }} />}
+                  // containerElement={<div />}
+                  // mapElement={<div />}
                 />
               </Grid>
             </Grid>
