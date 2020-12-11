@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router"
 import { 
@@ -167,10 +166,13 @@ export default function Busca(props) {
   const classes = useStyles();
 
   const router = useRouter();
-  const MapLoader = withScriptjs(Map);
 
   const [results, setResults] = React.useState([]);
   const [loading, setLoading] = React.useState(false)
+  const [coordinates, setCoordinates] = React.useState({})
+
+  const MapLoader = withScriptjs(Map(coordinates));
+
   const columns =
     [
       { 
@@ -366,12 +368,41 @@ export default function Busca(props) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
+    getLocation()
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
 
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition,showError);
+    } else {
+    alert("Seu browser não suporta Geolocalização.");
+    }
+  }
+  
+  function showPosition(position) {
+    setCoordinates({...coordinates, latOrigin: position.coords.latitude,  lgnOrigin: position.coords.longitude }) 
+  }
+
+  function showError(error) {
+    switch(error.code) {
+      case error.PERMISSION_DENIED:
+       alert("Usuário rejeitou a solicitação de Geolocalização.")
+        break;
+      case error.POSITION_UNAVAILABLE:
+       alert("Localização indisponível.")
+        break;
+      case error.TIMEOUT:
+       alert("A requisição expirou.")
+        break;
+      case error.UNKNOWN_ERROR:
+       alert("Algum erro desconhecido aconteceu.")
+        break;
+    }
+  }
 
   return  (
     <>
