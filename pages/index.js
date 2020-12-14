@@ -7,7 +7,7 @@ export default function Index() {
   return (
     <>
     <Head>
-      <title>FindMe - Home</title>
+      <title>FindMe</title>
     </Head>
     <Menu />
     <Home />
