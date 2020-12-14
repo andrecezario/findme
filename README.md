@@ -1,4 +1,6 @@
 # Findme
+![Página Inicial](https://i.ibb.co/3YBSmrn/home.png)
+
 
 ### Instalação
 
@@ -21,4 +23,6 @@ or:
 
 ### Sobre o Sistema
 
-[Findme](https://findme-nine.vercel.app/) é uma aplicação Web desenvolvida em Next JS para pesquisa de preços de produtos em Alagoas.
+[Findme](https://findme-gamma.vercel.app/) é uma aplicação Web desenvolvida em Next JS para pesquisa de preços de produtos em Alagoas. Ainda em fase de desenolvimento.
+
+![Busca](https://i.ibb.co/VQgRS12/busca.png)
