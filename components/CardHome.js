@@ -1,19 +1,20 @@
+// Imports
 import React from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid'
+import {
+  Card,
+  CardContent,
+  Typography,
+  Grid,
+  Button
+} from '@material-ui/core'
 
+// Styles
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     width: '100%',
     minHeight: 175,
-    // borderLeft: 'solid 5px '+theme.palette.primary.main
   },
   details: {
     display: 'flex',
@@ -53,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+// Component
 export default function MediaControlCard({title, subtitle, image}) {
   const classes = useStyles();
   const theme = useTheme();

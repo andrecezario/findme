@@ -1,37 +1,33 @@
-import React, { useEffect, useState } from "react";
+// Imports
+import React, { Component, useEffect, useState } from "react";
 import { useRouter } from "next/router"
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../store/ducks/coordinates';
 
 import { 
-  Container,
   Typography,
   Grid,
-  Avatar,
   Button,
-  Tooltip,
-  SvgIcon,
   IconButton,
   Drawer,
   Fab,
-  Dialog
+  Dialog,
+  Hidden
 } from "@material-ui/core";
 
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
-import CloseIcon from '@material-ui/icons/Close';
+
+import { BiX, BiFilterAlt, BiShowAlt, BiMap, BiChevronUp } from "react-icons/bi";
+import { MdAddShoppingCart } from "react-icons/md";
 
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Zoom from '@material-ui/core/Zoom';
 import PropTypes from 'prop-types';
 
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 
-import { get, post } from '../services/api';
-import { get as get_images, post as post_images} from '../services/api_images';
-
-import Skeleton from '@material-ui/lab/Skeleton';
+import { post } from '../services/api';
 
 import Spinner from '../utils/Spinner'
 import Menu from '../components/Menu'
@@ -39,7 +35,9 @@ import Filter from '../components/Filter'
 import Table from '../components/Table'
 import Map from '../components/Map'
 
-import { withScriptjs, withGoogleMap } from 'react-google-maps'
+import { withScriptjs } from 'react-google-maps'
+
+// Styles
 const drawerWidth = 300;
 
 const styles = (theme) => ({
@@ -58,6 +56,10 @@ const styles = (theme) => ({
 const useStyles = makeStyles((theme) => ({
   drawerPaper: {
     width: drawerWidth,
+  },
+  dialogTitle: {
+    background: theme.palette.primary.main,
+    color: '#fff'
   },
   contBtnFilter: {
     position: 'fixed',
@@ -81,7 +83,6 @@ const useStyles = makeStyles((theme) => ({
   titleSearch: {
     textTransform: 'uppercase',
     fontWeight: 600,
-    paddingTop: 16
   },
   title: {
     textTransform: 'capitalize !important',
@@ -114,6 +115,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// Component
 function ScrollTop(props) {
   const { children, window } = props;
   const classes = useStyles();
@@ -152,7 +154,7 @@ const DialogTitle = withStyles(styles)((props) => {
       <Typography variant="h6">{children}</Typography>
       {onClose ? (
         <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
-          <CloseIcon />
+          <BiX />
         </IconButton>
       ) : null}
     </MuiDialogTitle>
@@ -172,15 +174,9 @@ export default function Busca(props) {
 
   const [results, setResults] = React.useState([]);
   const [loading, setLoading] = React.useState(false)
-  // const [coordinates, setCoordinates] = React.useState({})
   const coordinates = useSelector((state) => state.coordinates);
   const dispatch = useDispatch();
 
-  // const MapLoader = withScriptjs(withGoogleMap(props =>
-  //   <Map
-  //     props={coordinates}
-  //   />
-  // ));
   const MapLoader = withScriptjs(Map)
 
   const columns =
@@ -193,7 +189,6 @@ export default function Busca(props) {
       { 
         title: 'Valor',
         field: 'valMinimoVendido',
-        type: 'numeric',
         render: rowData => colValores(rowData)
       },
       { 
@@ -246,52 +241,60 @@ export default function Busca(props) {
       if (a.valMinimoVendido.toFixed(2) < b.valMinimoVendido.toFixed(2)) {
         return -1;
       }
-      // a must be equal to b
       return 0;
     });
   }
 
   const title = (
     <>
-      <Typography className={classes.titleSearch} variant="h6" component="h6">
-        Resultados da busca para "{q}"
-      </Typography>
-      <Typography color="textSecondary" variant="body2" paragraph>
-        <b>{results.length} encontrados</b>
-      </Typography>
-  </>
+      <Hidden smDown>
+        <Typography className={classes.titleSearch} variant="h6" component="h6">
+          Resultados da busca para "{q}"
+        </Typography>
+        <Typography color="textSecondary" variant="body2" paragraph>
+          <b>{results.length} encontrados</b>
+        </Typography>
+      </Hidden>
+    </>
   );
 
   const colDescricao = (rowData) => (
-    <>
-      <Typography variant="body2" className={classes.title}>
-        {rowData.dscProduto.toLowerCase()}
-        {/* <Tooltip>
-          {rowData.dscProduto}
-        </Tooltip> */}
-      </Typography>
-    </>
+    <Grid container spacing={1} direction="row" justify="space-between" alignItems="center" style={{ minWidth: 350,  paddingRight: 20}}>
+      <Grid item xs={12} sm={9}>
+        <Typography variant="body2" color="primary" className={classes.title}>
+          {rowData.dscProduto.toLowerCase()}
+        </Typography>
+      </Grid>
+      <Grid item xs={12} sm={3}>
+        <Button 
+          size="small"
+          onClick={()=> alert(rowData.dscProduto)}
+          color="primary"
+          variant="outlined"
+          startIcon={<MdAddShoppingCart />}
+          >
+          Adicionar   
+        </Button>
+      </Grid>
+    </Grid>
   );
 
   const colEstabelecimento = (rowData) => (
     <Grid container spacing={1} direction="row" justify="space-between" alignItems="center" style={{paddingRight: 20}}>
-      <Grid item xs={9}>
+      <Grid item xs={12} lg={9}>
         <Typography variant="body2" className={classes.text} noWrap>
           {rowData.nomFantasia ? rowData.nomFantasia.toLowerCase() : rowData.nomRazaoSocial ? rowData.nomRazaoSocial.toLowerCase() : '-'}
         </Typography>
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={12} lg={3}>
         <Button 
           size="small"
           onClick={()=> alert(rowData.nomFantasia)}
           color="primary"
           variant="outlined"
-          startIcon={<SvgIcon color="primary" width="24" height="24" viewBox="0 0 16 16">
-                      <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-                      <path fill-rule="evenodd" d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
-                    </SvgIcon>}
+          startIcon={<BiShowAlt />}
           >
-          Conferir   
+          Ver   
         </Button>
       </Grid>
     </Grid>
@@ -315,22 +318,19 @@ export default function Busca(props) {
   )
 
   const colEndereco = (rowData) => (
-    <Grid container spacing={1} justify="space-between" alignItems="center" direction="row" style={{minWidth: 200}}  >
-      <Grid item xs={9}>
+    <Grid container spacing={1} justify="space-between" alignItems="center" direction="row" style={{ minWidth: 200, paddingRight: 20}}  >
+      <Grid item xs={12} lg={9}>
         <Typography variant="body2" className={classes.text}>
           {(rowData.nomLogradouro+', '+rowData.numImovel+' - '+rowData.nomBairro+' , '+rowData.nomMunicipio+' - AL , '+rowData.numCep).toLowerCase()}
         </Typography>
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={12} lg={3}>
         <Button 
           onClick={() => {
             handleClickOpen(rowData.numLatitude, rowData.numLongitude)
             }
           }
-          // onClick={() => alert(rowData.numLatitude+','+rowData.numLongitude)}
-          startIcon={<SvgIcon color="primary" width="24" height="24" viewBox="0 0 16 16">
-                      <path fill-rule="evenodd" d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z"/>
-                    </SvgIcon>}
+          startIcon={<BiMap />}
           color="primary"
           variant="outlined"
           >
@@ -359,8 +359,7 @@ export default function Busca(props) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = (numLatitude, numLongitude) => {
-    dispatch(actions.set({...coordinates, latDestination: numLatitude, lgnDestination: numLongitude }));
-    // setCoordinates({...coordinates, latDestination: numLatitude, lgnDestination: numLongitude })
+    dispatch(actions.set({ latDestination: numLatitude, lgnDestination: numLongitude }));
     getLocation()
     setOpen(true);
   };
@@ -377,8 +376,7 @@ export default function Busca(props) {
   }
   
   function showPosition(position) {
-    dispatch(actions.set({...coordinates, latOrigin: position.coords.latitude,  lgnOrigin: position.coords.longitude }))
-    // setCoordinates({...coordinates, latOrigin: position.coords.latitude,  lgnOrigin: position.coords.longitude }) 
+    dispatch(actions.set({ latOrigin: position.coords.latitude, lgnOrigin: position.coords.longitude }))
   }
 
   function showError(error) {
@@ -409,9 +407,7 @@ export default function Busca(props) {
           onClick={toggleDrawer(anchor, true)}
           className={classes.btnFilter}
         >
-          <SvgIcon width="24" height="24" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
-          </SvgIcon>
+          <BiFilterAlt size="32" />
         </Fab>
       </div>
       <Grid item xs={12} container spacing={2} justify="space-between" style={{padding: 20}}>
@@ -430,17 +426,17 @@ export default function Busca(props) {
         </Grid>
 
         <Dialog onClose={handleClose} open={open} fullWidth maxWidth='sm'>
-          <DialogTitle onClose={handleClose}>
-            Mapa
+          <DialogTitle onClose={handleClose} className={classes.dialogTitle}>
+            <Typography variant="h6">
+              Rota da sua localização até o estabelecimento
+            </Typography>
           </DialogTitle>
-          <DialogContent dividers>
+          <DialogContent dividers style={{height: 550, overflowY: "hidden"}}>
             <Grid container justify="center" alignItems="center">
               <Grid item>
                 <MapLoader
                   googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_GOOGLE_MAPS}`}
-                  loadingElement={<div style={{ height: `100%` }} />}
-                  // containerElement={<div />}
-                  // mapElement={<div />}
+                  loadingElement={<div style={{ height: "100%" }} />}
                 />
               </Grid>
             </Grid>
@@ -448,7 +444,7 @@ export default function Busca(props) {
         </Dialog>
         <ScrollTop {...props}>
           <Fab color="secondary" size="small">
-            <KeyboardArrowUpIcon />
+            <BiChevronUp size="32" />
           </Fab>
         </ScrollTop>
       </Grid>

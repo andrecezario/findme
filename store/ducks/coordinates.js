@@ -18,7 +18,7 @@ const INITIAL_STATE = {
 export default function coordinates(state = INITIAL_STATE, action) {
   switch (action.type) {
     case TYPES.SET:
-      return {...action.data}
+      return {...state, ...action.data}
     case TYPES.CLEAR:
       return INITIAL_STATE;
       default:

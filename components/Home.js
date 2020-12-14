@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
-import { Grid, Button } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 
 //Imports
 import Search from './Search';
@@ -25,7 +25,6 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    // padding: theme.spacing(3),
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -50,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+// Component
 export default function Home() {
   const classes = useStyles();
 

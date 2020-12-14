@@ -21,6 +21,8 @@ import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import SearchIcon from '@material-ui/icons/Search';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 
+import { MdAddShoppingCart } from "react-icons/md";
+
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBoxIcon {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <CheckIcon {...props} ref={ref} />),
@@ -78,15 +80,25 @@ function Table({
       draggable: true,
       searchFieldVariant: 'outlined',
       selection: true,
+      selectionProps: rowData => ({
+        color: 'primary'
+      }),
       headerStyle: {
         fontWeight: '600',
       },
       ...options,
     },
+    // actions: [
+    //   {
+    //     tooltip: 'Remove All Selected Users',
+    //     icon: 'X',
+    //     onClick: (evt, data) => alert('You want to delete ' + data.length + ' rows')
+    //   }
+    // ],
     localization: {
       pagination: {
         labelDisplayedRows: '{from}-{to} de {count}',
-        labelRowsSelect: 'Linhas',
+        labelRowsSelect: 'Itens',
         nextTooltip: 'Próximo',
         previousTooltip: 'Anterior',
         firstTooltip: 'Primeiro',
@@ -107,7 +119,7 @@ function Table({
     <MaterialTable
       components={{
         Container: (props) => (
-          <Paper {...props} variant="outlined" />
+          <Paper {...props} variant="outlined" style={{paddingTop: 16}}/>
         ),
       }}
       {...props}

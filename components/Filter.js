@@ -1,25 +1,24 @@
+// Imports
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { 
   Typography,
   Grid,
-  Card,
   Divider,
-  SvgIcon,
   Slider,
   Radio,
   RadioGroup,
   FormControl,
   FormControlLabel,
-  FormLabel,
   Toolbar,
   AppBar,
-  IconButton,
-  Fab
+  IconButton
 } 
 from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
 
+import { BiX, BiMap, BiMoney } from "react-icons/bi";
+
+// Styles
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
@@ -36,8 +35,12 @@ const useStyles = makeStyles((theme) => ({
     color: '#fff',
     right: theme.spacing(1),
   },
+  icon: {
+    color: theme.palette.primary.main
+  }
 }));
 
+// Component
 export default function Filter({close}) {
   const classes = useStyles();
 
@@ -65,7 +68,7 @@ export default function Filter({close}) {
             Filtros
           </Typography>
           <IconButton className={classes.fab} onClick={close}>
-            <CloseIcon />
+            <BiX size="28" />
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -75,9 +78,9 @@ export default function Filter({close}) {
         </Typography>
         <FormControl component="fieldset">
         <RadioGroup value={type} onChange={handleChangeType}>
-          <FormControlLabel value="descrição" control={<Radio color="secondary" size="small" />} label="Descrição" />
-          <FormControlLabel value="código de barras" control={<Radio color="secondary" size="small" />} label="Código de barras" />
-          <FormControlLabel value="estabelecimento" control={<Radio color="secondary" size="small"/>} label="Estabelecimento" />
+          <FormControlLabel value="descrição" control={<Radio color="primary" size="small" />} label="Descrição" />
+          <FormControlLabel value="código de barras" control={<Radio color="primary" size="small" />} label="Código de barras" />
+          <FormControlLabel value="estabelecimento" control={<Radio color="primary" size="small"/>} label="Estabelecimento" />
         </RadioGroup>
         </FormControl>
 
@@ -91,9 +94,7 @@ export default function Filter({close}) {
         </Typography>
         <Grid container spacing={2}>
           <Grid item>
-            <SvgIcon color="secondary" width="24" height="24" viewBox="0 0 16 16">
-              <path fill-rule="evenodd" d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-            </SvgIcon>
+            <BiMap className={classes.icon} size="24" />
           </Grid>
           <Grid item xs>
             <Slider 
@@ -104,7 +105,7 @@ export default function Filter({close}) {
               max={15}
               valueLabelDisplay="auto"
               onChange={handleChangeDistance}
-              color="secondary"
+              color="primary"
               />
           </Grid>
         </Grid>
@@ -119,10 +120,7 @@ export default function Filter({close}) {
         </Typography>
         <Grid container spacing={2}>
           <Grid item>
-            <SvgIcon color="secondary" width="24" height="24" viewBox="0 0 16 16">
-              <path fill-rule="evenodd" d="M15 4H1v8h14V4zM1 3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H1z"/>
-              <path d="M13 4a2 2 0 0 0 2 2V4h-2zM3 4a2 2 0 0 1-2 2V4h2zm10 8a2 2 0 0 1 2-2v2h-2zM3 12a2 2 0 0 0-2-2v2h2zm7-4a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
-            </SvgIcon>
+            <BiMoney className={classes.icon} size="24" />
           </Grid>
           <Grid item xs>
           <Slider
@@ -131,7 +129,7 @@ export default function Filter({close}) {
             min={0}
             max={10000}
             valueLabelDisplay="auto"
-            color="secondary"
+            color="primary"
           />
           </Grid>
         </Grid>

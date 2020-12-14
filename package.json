@@ -18,6 +18,7 @@
     "react-dom": "latest",
     "react-geocode": "^0.2.2",
     "react-google-maps": "^9.4.5",
+    "react-icons": "^4.1.0",
     "react-redux": "^7.2.2",
     "react-spinners": "^0.9.0",
     "redux": "^4.0.5",
