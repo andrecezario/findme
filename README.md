@@ -1,25 +1,24 @@
-# Next.js example
+# Findme
 
-## How to use
+### Instalação
 
-Download the example [or clone the repo](https://github.com/mui-org/material-ui):
+Faça o download do código [ou clone o repositório](https://github.com/mui-org/material-ui):
 
 ```sh
 curl https://codeload.github.com/mui-org/material-ui/tar.gz/master | tar -xz --strip=2  material-ui-master/examples/nextjs
 cd nextjs
 ```
 
-Install it and run:
+Instale as dependências e execute:
 
 ```sh
 npm install
 npm run dev
 ```
-
 or:
 
-[![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/mui-org/material-ui/tree/master/examples/nextjs)
+[![Edite no CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/mui-org/material-ui/tree/master/examples/nextjs)
 
-## The idea behind the example
+### Sobre o Sistema
 
-[Next.js](https://github.com/zeit/next.js) is a framework for server-rendered React apps.
+[Findme](https://findme-nine.vercel.app/) é uma aplicação Web desenvolvida em Next JS para pesquisa de preços de produtos em Alagoas.
