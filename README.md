@@ -8,7 +8,7 @@ Faça o download do código [ou clone o repositório](https://github.com/andrece
 
 ```sh
 git clone https://github.com/andrecezario/findme
-cd nextjs
+cd findme
 ```
 
 Instale as dependências e execute:
